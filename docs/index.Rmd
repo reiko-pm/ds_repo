@@ -40,9 +40,88 @@ s + geom_point()
 
 ### Shape size
 ```{r `shapesize`}
-ss <- ggplot(data = mpg, aes(x = displ, y = hwy, shape = class))
-ss + geom_point()
+ss <- ggplot(data = mpg, aes(x = cty, y = hwy, size = class, color=fl))
+ss + geom_point(alpha=0.2) #opacity
 
 ```
-## Boxplot
+### shape color
+```{r `shape color`}
+ss <- ggplot(data = mpg, aes(x = cty, y = hwy, size = class, color=fl))
+ss + geom_point(alpha=0.2, color="blue") #opacity
+
+```
+
+### Geoms
+```{r geoms} 
+  ggplot(data=mpg,aes(x=displ, y=hwy)) +
+    geom_point() +
+   geom_smooth(aes(x=displ, y=hwy))
+    
+```
+### Geoms
+```{r geoms2} 
+  ggplot(data=mpg,aes(x=cty, y=displ)) +
+    geom_point(aes(size=class,color=hwy>20),alpha=0.2) +
+    theme(panel.grid.major=element_blank(),panel.grid.minor=element_blank(),panel.background =element_blank())+
+   geom_smooth(aes(x=cty, y=displ)) +
+  geom_smooth(method="lm")
+    
+```
+
+## Data Wrangling with `dplyr`
+
+```{r datawrangline}
+gapminder <- readr::read_csv("https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder.csv")
+
+## useful functions to get to know your data:
+head(gapminder) #show 6 rows of data
+tail(gapminder) #last six rows
+
+head(gapminder,30)
+tail(gapminder,9)
+
+str(gapminder) #structure
+names(gapminder) #col headers
+d <- dim(gapminder) #dimension
+ncol(gapminder)
+nrow(gapminder)
+c(nrow(gapminder), ncol(gapminder)) #c=combine function
+
+summary(gapminder) #statistics
+
+## everything above we operated on the whole gapminder dataset
+
+head(gapminder$lifeExp)
+
+
+
+```
+
+`read_csv` is from the `readr` package (part of tidyverse). 
+```{r dplyrr}
+## Working with `dplyr`
+
+filter(gapminder, lifeExp < 29)
+
+filter(gapminder, country=="Mexico")
+
+sw=filter(gapminder, country=="Sweden")
+sw_mean=mean(sw$lifeExp)
+
+mean(filter(gapminder, country=="Sweden")$lifeExp)
+
+## pipe operator `%>%`
+gapminder %>% head()
+
+#data classes, re: mean produces a data vector/value ; tidyverse expects a dataframe
+# so we need to use summarize
+
+gapminder %>% 
+  filter(country == "Sweden") %>% 
+  summarize(mean_lifeExp = mean(lifeExp))
+
+
+
+```
+
 
