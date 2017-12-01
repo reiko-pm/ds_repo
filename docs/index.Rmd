@@ -223,9 +223,9 @@ rj %>% summary()
 
 ```{r data formats}
 ### Example dataset
-AirPassengers
+#AirPassengers
 
-mpg #long format
+#mpg #long format
 
 ## wide format year col removed
 gap_wide <- readr::read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder_wide.csv')
@@ -312,12 +312,6 @@ pp
 
 
 
-#mlife_df <- 
-
-#p + 
-
-
-
 ```
 
 ```{r spread}
@@ -331,5 +325,16 @@ dim(gap_normal)
 dim(gapminder)
 names(gap_normal)
 names(gapminder)
+
+### Exercise convert gap_long back to gap_wide
+
+tail(gap_long)
+
+gap_wide_new <- unite(gap_long, "var_name",c("obs_type","year")) %>% 
+  spread(key=var_name,
+         value=obs_values)
+
+names(gap_wide_new)
+
 ```
 
