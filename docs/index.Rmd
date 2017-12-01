@@ -8,6 +8,7 @@ output:
     toc: true
     toc_float: true
 ---
+#rm(list=ls())
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -171,7 +172,7 @@ gapminder %>%
 gapminder %>%
   filter(country %in% c("Egypt","Vietnam")) %>%
   group_by(country) %>%
-  summarize(max_gdpPercap=max(gdpPercap))
+  summarize(max_gdpPercap=max(gdpPercap)) 
 
 gapminder %>%
   group_by(country) %>%
@@ -181,5 +182,154 @@ gapminder %>%
 
 
 
+```
+###Joining datasets
+```{r co2}
+## read in the data. (same URL as yesterday, just with co2.csv instead of gapminder.csv)
+co2 <- read_csv("https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/co2.csv")
+
+## explore
+co2 %>% head()
+co2 %>% str()
+co2 %>% dim() # 12
+
+## create new variable that is only 2007 data
+gap_2007 <- gapminder %>%
+  filter(year == 2007) 
+gap_2007 %>% dim() # 142  
+
+## left_join gap_2007 to co2
+lj <- left_join(gap_2007, co2, by = "country")
+
+## explore
+lj %>% dim() #142
+lj %>% summary() # lots of NAs in the co2_2017 columm
+#lj %>% View() 
+
+## right_join gap_2007 and co2
+rj <- right_join(gap_2007, co2)
+rj <- right_join(gap_2007, co2, by = "country")
+
+## explore
+rj %>% dim() # 12
+rj %>% summary()
+#rj %>% View()
+
+
+
+```
+
+## tidyr Data formats
+
+```{r data formats}
+### Example dataset
+AirPassengers
+
+mpg #long format
+
+## wide format year col removed
+gap_wide <- readr::read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder_wide.csv')
+## yesterday's format (intermediate)
+gapminder <- readr::read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder.csv')
+
+#gather wide to slim key=name of new col and value=data
+#spread slim to wide
+
+gap_long <- gap_wide %>% 
+  gather(key   = obstype_year,
+         value = obs_values)
+
+str(gap_long)
+head(gap_long)
+tail(gap_long)
+
+gap_long <- gap_wide %>% 
+  gather(key   = obstype_year,
+         value = obs_values,
+         dplyr::starts_with('pop'),
+         dplyr::starts_with('lifeExp'),
+         dplyr::starts_with('gdpPercap'))  #here i'm listing all the columns to use in gather
+
+str(gap_long)
+head(gap_long)
+tail(gap_long)
+
+### Or ignore columns so you don't have to type out all columns
+
+gap_long <- gap_wide %>% 
+  gather(key   = obstype_year,
+         value = obs_values,
+         -continent, -country)
+
+str(gap_long)
+head(gap_long)
+tail(gap_long)
+
+### `separate`out the years
+gap_long <- gap_wide %>% 
+  gather(key   = obstype_year,
+         value = obs_values,
+         -continent, -country) %>%
+  separate(obstype_year,
+           into = c('obs_type','year'),
+           sep = "_",
+           convert = T) #this ensures that the year column is an integer rather than a character
+
+str(gap_long)
+head(gap_long)
+tail(gap_long)
+
+
+
+```
+
+
+
+```{r ggplot with formats}
+
+
+life_df <- gap_long %>%
+  filter(obs_type == "lifeExp",
+         continent == "Americas")
+
+p <- ggplot(life_df, aes(x = year, y = obs_values, color = country)) +
+  geom_line()
+
+tests <- gap_long %>% group_by(continent, year, obs_type) %>% 
+  summarize(means = mean(obs_values)) %>% 
+  filter(obs_type == "lifeExp", year %in% c(seq(1982,2007)))
+
+pp <-  ggplot(tests, aes(x = year, y = means, color = continent)) +
+  geom_line() +
+  labs(title='Mean life expectancy per continent',
+       x='Year',
+       y='Age (years)',
+  color='Continent')
+#View(pp)
+pp
+
+
+
+
+
+#mlife_df <- 
+
+#p + 
+
+
+
+```
+
+```{r spread}
+## `spread`
+gap_normal <- gap_long %>% 
+  spread(key=obs_type, 
+         value=obs_values)
+ 
+
+dim(gap_normal)
+dim(gapminder)
+names(gap_normal)
+names(gapminder)
 ```
 
