@@ -590,6 +590,26 @@ gapminder %&gt;%
 ##     &lt;chr&gt;         &lt;dbl&gt;
 ## 1   Egypt      5581.181
 ## 2 Vietnam      2441.576</code></pre>
+<pre class="r"><code>gapminder %&gt;%
+  group_by(country) %&gt;%
+  mutate(min_lifeExp=min(lifeExp),max(lifeExp)) %&gt;%
+  filter(min_lifeExp==lifeExp) %&gt;%
+  arrange(min_lifeExp)</code></pre>
+<pre><code>## # A tibble: 142 x 8
+## # Groups:   country [142]
+##          country  year     pop continent lifeExp gdpPercap min_lifeExp
+##            &lt;chr&gt; &lt;int&gt;   &lt;dbl&gt;     &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+##  1        Rwanda  1992 7290203    Africa  23.599  737.0686      23.599
+##  2   Afghanistan  1952 8425333      Asia  28.801  779.4453      28.801
+##  3        Gambia  1952  284320    Africa  30.000  485.2307      30.000
+##  4        Angola  1952 4232095    Africa  30.015 3520.6103      30.015
+##  5  Sierra Leone  1952 2143249    Africa  30.331  879.7877      30.331
+##  6      Cambodia  1977 6978607      Asia  31.220  524.9722      31.220
+##  7    Mozambique  1952 6446316    Africa  31.286  468.5260      31.286
+##  8  Burkina Faso  1952 4469979    Africa  31.975  543.2552      31.975
+##  9 Guinea-Bissau  1952  580653    Africa  32.500  299.8503      32.500
+## 10    Yemen Rep.  1952 4963829      Asia  32.548  781.7176      32.548
+## # ... with 132 more rows, and 1 more variables: `max(lifeExp)` &lt;dbl&gt;</code></pre>
 </div>
 
 
