@@ -124,4 +124,54 @@ gapminder %>%
 
 ```
 
+```{r more gapminder}
+
+## select 2 columns
+select(gapminder, year, lifeExp)
+
+##using pipes
+gapminder %>% 
+  select(year, lifeExp) %>%
+  tail()
+
+## combine what we've learned
+gapminder %>%
+  filter(country == "Cambodia") %>%
+  select(country, year,pop,gdpPercap)
+
+# use select with minus sign
+gapminder %>%
+  filter(country == "Cambodia") %>%
+  select(-continent, -lifeExp)
+
+## a few more things with filter
+gapminder %>%
+  filter(country == "Mexico", year == 2002)
+
+##`mutate()` to add columns
+gapminder %>%
+  mutate(gdp=pop*gdpPercap)
+
+#let's add an index
+gapminder %>%
+  mutate(index=1:nrow(gapminder)) %>%
+  tail()
+
+#let's do both
+test <- gapminder %>%
+  mutate(gdp=pop*gdpPercap,index=1:nrow(gapminder)) %>%
+  tail()
+
+gapminder %>%
+  filter(country %in% c("Egypt","Vietnam")) %>%
+  mutate(maxgdp=max(gdpPercap))
+  
+
+## group_by() so we get two maxes!
+gapminder %>%
+  filter(country %in% c("Egypt","Vietnam")) %>%
+  group_by(country) %>%
+  summarize(max_gdpPercap=max(gdpPercap))
+
+```
 
